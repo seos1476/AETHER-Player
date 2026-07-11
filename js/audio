@@ -94,17 +94,27 @@ function renderLibrary() {
         const row = document.createElement("div");
 
         row.className = "song";
+row.innerHTML = `
+<div class="song-left">
 
-        row.innerHTML = `
-            <span>🎵</span>
+<span>🎵</span>
 
-            <div>
+<div>
 
-                <h3>${song.name.replace(".mp3","")}</h3>
+<h3>${song.name.replace(".mp3","")}</h3>
 
-                <p>Local Audio</p>
+<p>Local Audio</p>
 
-            </div>
+</div>
+
+</div>
+
+<button class="fav-btn">
+
+🤍
+
+</button>
+`;
         `;
 
         row.onclick = () => {
@@ -113,7 +123,19 @@ function renderLibrary() {
 
         };
 
-        songList.appendChild(row);
+  const fav=row.querySelector(".fav-btn");
+
+fav.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+fav.classList.toggle("liked");
+
+fav.innerHTML=
+fav.classList.contains("liked")
+?"❤️":"🤍";
+
+});
 
     });
 
