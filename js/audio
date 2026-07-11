@@ -1,4 +1,16 @@
 let shuffle=false;
+nextSong()
+function shuffleSong(){
+
+if(songs.length===0) return;
+
+const random=
+
+Math.floor(Math.random()*songs.length);
+
+playSong(random);
+
+}
 /* ==========================================
    AETHER Player Audio Engine v2.0
 ========================================== */
