@@ -1,79 +1,106 @@
-/* ===========================
-   AETHER Player v0.2
-=========================== */
+/* ==========================================
+   AETHER Player
+   Main UI Script
+========================================== */
 
 console.log("🎵 AETHER Player Loaded");
 
+/* ==========================
+   Progress Bar Animation
+========================== */
+
 const progress = document.querySelector(".progress-fill");
 
-let value = 45;
-let direction = 1;
+if (progress) {
 
-setInterval(() => {
+    let value = 45;
+    let direction = 1;
 
-    value += direction;
+    setInterval(() => {
 
-    if(value >= 100){
-        direction = -1;
-    }
+        value += direction;
 
-    if(value <= 10){
-        direction = 1;
-    }
+        if (value >= 100) direction = -1;
+        if (value <= 10) direction = 1;
 
-    progress.style.width = value + "%";
+        progress.style.width = value + "%";
 
-},80);
+    }, 80);
 
+}
 
-/* Floating album animation */
+/* ==========================
+   Album Rotation
+========================== */
 
-const album = document.querySelector(".album");
+const album = document.querySelector(".album-art");
 
-let angle = 0;
+if (album) {
 
-setInterval(()=>{
+    let angle = 0;
 
-    angle += 0.15;
+    setInterval(() => {
 
-    album.style.transform =
-        `rotate(${angle}deg)`;
+        angle += 0.15;
 
-},20);
+        album.style.transform =
+            `rotate(${angle}deg)`;
 
+    }, 20);
 
-/* Buttons */
+}
 
-document.querySelectorAll("button").forEach(btn=>{
+/* ==========================
+   Button Hover Animation
+========================== */
 
-btn.addEventListener("mouseenter",()=>{
+document.querySelectorAll("button").forEach(btn => {
 
-btn.style.transform="translateY(-6px) scale(1.03)";
+    btn.addEventListener("mouseenter", () => {
 
-});
+        btn.style.transform =
+            "translateY(-5px) scale(1.04)";
 
-btn.addEventListener("mouseleave",()=>{
+    });
 
-btn.style.transform="translateY(0px) scale(1)";
+    btn.addEventListener("mouseleave", () => {
 
-});
+        btn.style.transform =
+            "translateY(0px) scale(1)";
 
-});
-
-
-/* Music Card Glow */
-
-const card=document.querySelector(".music-card");
-
-document.addEventListener("mousemove",(e)=>{
-
-const x=e.clientX/window.innerWidth;
-
-const y=e.clientY/window.innerHeight;
-
-card.style.transform=
-`rotateY(${(x-.5)*12}deg)
- rotateX(${(0.5-y)*12}deg)
- translateY(-8px)`;
+    });
 
 });
+
+/* ==========================
+   Album Card 3D Effect
+========================== */
+
+const card = document.querySelector(".album-card");
+
+if (card) {
+
+    document.addEventListener("mousemove", (e) => {
+
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+
+        card.style.transform =
+            `rotateY(${(x - 0.5) * 10}deg)
+             rotateX(${(0.5 - y) * 10}deg)
+             translateY(-8px)`;
+
+    });
+
+}
+
+/* ==========================
+   Future Modules
+========================== */
+
+// audio.js
+// spotify.js
+// youtube.js
+// esp32.js
+
+console.log("✅ UI Ready");
