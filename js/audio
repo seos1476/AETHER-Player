@@ -200,3 +200,52 @@ window.nextSong = nextSong;
 window.previousSong = previousSong;
 window.songs = songs;
 window.currentSong = currentSong;
+/* ==========================
+   Search
+========================== */
+
+const search=document.getElementById("searchInput");
+
+search.addEventListener("input",()=>{
+
+const value=search.value.toLowerCase();
+
+document.querySelectorAll(".song").forEach(song=>{
+
+const text=song.innerText.toLowerCase();
+
+song.style.display=text.includes(value)
+?"flex":"none";
+
+});
+
+});
+/* ==========================
+   Keyboard
+========================== */
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.code==="Space"){
+
+e.preventDefault();
+
+document
+.getElementById("playPauseBtn")
+.click();
+
+}
+
+if(e.code==="ArrowRight"){
+
+nextSong();
+
+}
+
+if(e.code==="ArrowLeft"){
+
+previousSong();
+
+}
+
+});
