@@ -12,3 +12,5 @@ const SCOPES = [
 ];
 const CLIENT_ID = "4b760b62a55545bba8b5f80a7e4a3ff0";
 const REDIRECT_URI = "https://seos1476.github.io/AETHER-Player/";
+const CLIENT_ID = "4b760b62a55545bba8b5f80a7e4a3ff0";
+const REDIRECT_URI = "https://seos1476.github.io/AETHER-Player/";
