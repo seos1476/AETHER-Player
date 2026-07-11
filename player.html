@@ -37,39 +37,23 @@
 
 <nav>
 
-<a class="active" href="#">
-🏠 Home
-</a>
+<a class="active" href="#">🏠 Home</a>
 
-<a href="#">
-🎵 Library
-</a>
+<a href="#">🎵 Library</a>
 
-<a href="#">
-❤️ Favorites
-</a>
+<a href="#">❤️ Favorites</a>
 
-<a href="#">
-📁 Upload
-</a>
+<a href="#">📁 Upload</a>
 
-<a href="#">
-☁ Cloud Sync
-</a>
+<a href="#">☁ Cloud Sync</a>
 
-<a href="#">
-⚙ Settings
-</a>
+<a href="#">⚙ Settings</a>
 
 </nav>
 
 <div class="sidebar-footer">
 
-<p>
-
-Version 1.0 Developer Preview
-
-</p>
+<p>Version 2.0 Developer Preview</p>
 
 </div>
 
@@ -91,16 +75,23 @@ placeholder="Search songs, albums or artists...">
 
 <div class="top-buttons">
 
-<button>
+<input
+type="file"
+id="musicUpload"
+accept="audio/*"
+multiple
+hidden>
 
-ESP32
-
+<button id="uploadBtn">
+📁 Upload Music
 </button>
 
 <button>
+ESP32
+</button>
 
+<button>
 GitHub
-
 </button>
 
 </div>
@@ -111,47 +102,51 @@ GitHub
 
 <div class="album-card">
 
-<div class="album-art">
+<div class="album-art"></div>
+
+<h2 id="nowPlayingTitle">
+No Song Playing
+</h2>
+
+<p id="nowPlayingArtist">
+Upload music to begin
+</p>
+
+<div id="progress" class="progress">
+
+<div id="progressFill" class="progress-fill"></div>
 
 </div>
 
-<h2>
+<div class="time-info">
 
-Midnight Aurora
+<span id="currentTime">0:00</span>
 
-</h2>
-
-<p>
-
-AETHER Demo Music
-
-</p>
-
-<div class="progress">
-
-<div class="progress-fill"></div>
+<span id="duration">0:00</span>
 
 </div>
 
 <div class="controls">
 
-<button>
+<button id="prevBtn">⏮</button>
 
-⏮
+<button id="playPauseBtn">▶</button>
 
-</button>
+<button id="nextBtn">⏭</button>
 
-<button>
+</div>
 
-▶
+<div class="volume-container">
 
-</button>
+🔊
 
-<button>
-
-⏭
-
-</button>
+<input
+id="volumeSlider"
+type="range"
+min="0"
+max="1"
+step="0.01"
+value="1">
 
 </div>
 
@@ -159,184 +154,66 @@ AETHER Demo Music
 
 <div class="playlist">
 
-<h2>
+<h2>Library</h2>
 
-Library
+<div id="songList">
 
-</h2>
-
-<div class="song">
-
-<span>
-
-🎵
-
-</span>
-
-<div>
-
-<h3>
-
-Midnight Aurora
-
-</h3>
-
-<p>
-
-Demo Track
-
-</p>
-
-</div>
-
-</div>
-
-<div class="song">
-
-<span>
-
-🎵
-
-</span>
-
-<div>
-
-<h3>
-
-Ocean Waves
-
-</h3>
-
-<p>
-
-Demo Track
-
-</p>
-
-</div>
-
-</div>
-
-<div class="song">
-
-<span>
-
-🎵
-
-</span>
-
-<div>
-
-<h3>
-
-Neon Lights
-
-</h3>
-
-<p>
-
-Demo Track
-
-</p>
-
-</div>
-
-</div>
-
-<div class="song">
-
-<span>
-
-🎵
-
-</span>
-
-<div>
-
-<h3>
-
-Future Bass
-
-</h3>
-
-<p>
-
-Demo Track
-
-</p>
-
-</div>
-
-</div>
-<div class="song">
-
-<span>
-
-🎵
-
-</span>
-
-<div>
-
-<h3>
-
-Lo-Fi Nights
-
-</h3>
-
-<p>
-
-Demo Track
-
-</p>
-
-</div>
+<p>No songs uploaded.</p>
 
 </div>
 
 </div>
 
 </section>
-
 <section class="stats">
 
-<div class="stat-card">
+    <div class="stat-card">
 
-<h2>120+</h2>
+        <h2 id="songCount">0</h2>
 
-<p>Offline Songs</p>
+        <p>Offline Songs</p>
 
-</div>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
 
-<h2>ESP32</h2>
+        <h2>ESP32</h2>
 
-<p>Ready</p>
+        <p>Ready</p>
 
-</div>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
 
-<h2>Spotify</h2>
+        <h2>Spotify</h2>
 
-<p>Companion (Planned)</p>
+        <p>Companion (Coming)</p>
 
-</div>
+    </div>
 
-<div class="stat-card">
+    <div class="stat-card">
 
-<h2>YouTube Music</h2>
+        <h2>YouTube</h2>
 
-<p>Companion (Planned)</p>
+        <p>Companion (Coming)</p>
 
-</div>
+    </div>
 
 </section>
+
+<!-- HTML5 Audio Engine -->
+
+<audio id="audioPlayer"></audio>
 
 </main>
 
 </div>
+
+<!-- JavaScript -->
+
+<script src="js/main.js"></script>
+
+<script src="js/audio.js"></script>
 
 <script src="js/player.js"></script>
 
