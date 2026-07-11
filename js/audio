@@ -1,21 +1,25 @@
 /* ==========================================
-   AETHER Player Audio Engine v1.0
+   AETHER Player Audio Engine v2.0
 ========================================== */
 
 const audio = document.getElementById("audioPlayer");
 
 const uploadInput = document.getElementById("musicUpload");
-
 const uploadBtn = document.getElementById("uploadBtn");
 
 const songList = document.getElementById("songList");
 
-let songs = [];
-let currentSong = 0;
+const title = document.getElementById("nowPlayingTitle");
+const artist = document.getElementById("nowPlayingArtist");
 
-/* ===============================
+const counter = document.getElementById("songCount");
+
+let songs = [];
+let currentSong = -1;
+
+/* ==========================
    Upload Button
-================================ */
+========================== */
 
 uploadBtn.addEventListener("click", () => {
 
@@ -23,21 +27,25 @@ uploadBtn.addEventListener("click", () => {
 
 });
 
-/* ===============================
+/* ==========================
    Upload Songs
-================================ */
+========================== */
 
 uploadInput.addEventListener("change", (e) => {
 
-    songs = Array.from(e.target.files);
+    const files = Array.from(e.target.files);
+
+    songs.push(...files);
+
+    counter.textContent = songs.length;
 
     renderLibrary();
 
 });
 
-/* ===============================
+/* ==========================
    Library
-================================ */
+========================== */
 
 function renderLibrary() {
 
@@ -54,37 +62,37 @@ function renderLibrary() {
 
     songs.forEach((song, index) => {
 
-        const item = document.createElement("div");
+        const row = document.createElement("div");
 
-        item.className = "song";
+        row.className = "song";
 
-        item.innerHTML = `
+        row.innerHTML = `
             <span>🎵</span>
 
             <div>
 
-                <h3>${song.name}</h3>
+                <h3>${song.name.replace(".mp3","")}</h3>
 
-                <p>Local File</p>
+                <p>Local Audio</p>
 
             </div>
         `;
 
-        item.onclick = () => {
+        row.onclick = () => {
 
             playSong(index);
 
         };
 
-        songList.appendChild(item);
+        songList.appendChild(row);
 
     });
 
 }
 
-/* ===============================
+/* ==========================
    Play Song
-================================ */
+========================== */
 
 function playSong(index) {
 
@@ -92,27 +100,74 @@ function playSong(index) {
 
     const file = songs[index];
 
-    const url = URL.createObjectURL(file);
-
-    audio.src = url;
+    audio.src = URL.createObjectURL(file);
 
     audio.play();
 
-    console.log("Playing:", file.name);
+    title.textContent =
+        file.name.replace(".mp3","");
+
+    artist.textContent =
+        "Local Audio";
+
+    document.querySelectorAll(".song")
+        .forEach(item => item.classList.remove("active"));
+
+    document.querySelectorAll(".song")[index]
+        .classList.add("active");
+
+    const playBtn =
+        document.getElementById("playPauseBtn");
+
+    if(playBtn)
+        playBtn.innerHTML="⏸";
 
 }
 
-/* ===============================
-   Auto Next
-================================ */
+/* ==========================
+   Next Song
+========================== */
 
-audio.addEventListener("ended", () => {
+function nextSong(){
+
+    if(songs.length===0) return;
 
     currentSong++;
 
-    if (currentSong >= songs.length)
-        currentSong = 0;
+    if(currentSong>=songs.length)
+        currentSong=0;
 
     playSong(currentSong);
 
-});
+}
+
+/* ==========================
+   Previous Song
+========================== */
+
+function previousSong(){
+
+    if(songs.length===0) return;
+
+    currentSong--;
+
+    if(currentSong<0)
+        currentSong=songs.length-1;
+
+    playSong(currentSong);
+
+}
+
+/* ==========================
+   Song Finished
+========================== */
+
+audio.addEventListener("ended",nextSong);
+
+/* Make available to player.js */
+
+window.playSong = playSong;
+window.nextSong = nextSong;
+window.previousSong = previousSong;
+window.songs = songs;
+window.currentSong = currentSong;
