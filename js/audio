@@ -226,7 +226,27 @@ function previousSong(){
    Song Finished
 ========================== */
 
-audio.addEventListener("ended",nextSong);
+audio.addEventListener("ended",()=>{
+
+if(repeat){
+
+playSong(currentSong);
+
+}
+
+else if(shuffle){
+
+shuffleSong();
+
+}
+
+else{
+
+nextSong();
+
+}
+
+});
 
 /* Make available to player.js */
 
