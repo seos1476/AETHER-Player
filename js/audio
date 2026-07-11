@@ -1,1 +1,118 @@
+/* ==========================================
+   AETHER Player Audio Engine v1.0
+========================================== */
 
+const audio = document.getElementById("audioPlayer");
+
+const uploadInput = document.getElementById("musicUpload");
+
+const uploadBtn = document.getElementById("uploadBtn");
+
+const songList = document.getElementById("songList");
+
+let songs = [];
+let currentSong = 0;
+
+/* ===============================
+   Upload Button
+================================ */
+
+uploadBtn.addEventListener("click", () => {
+
+    uploadInput.click();
+
+});
+
+/* ===============================
+   Upload Songs
+================================ */
+
+uploadInput.addEventListener("change", (e) => {
+
+    songs = Array.from(e.target.files);
+
+    renderLibrary();
+
+});
+
+/* ===============================
+   Library
+================================ */
+
+function renderLibrary() {
+
+    songList.innerHTML = "";
+
+    if (songs.length === 0) {
+
+        songList.innerHTML =
+            "<p>No songs uploaded.</p>";
+
+        return;
+
+    }
+
+    songs.forEach((song, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "song";
+
+        item.innerHTML = `
+            <span>🎵</span>
+
+            <div>
+
+                <h3>${song.name}</h3>
+
+                <p>Local File</p>
+
+            </div>
+        `;
+
+        item.onclick = () => {
+
+            playSong(index);
+
+        };
+
+        songList.appendChild(item);
+
+    });
+
+}
+
+/* ===============================
+   Play Song
+================================ */
+
+function playSong(index) {
+
+    currentSong = index;
+
+    const file = songs[index];
+
+    const url = URL.createObjectURL(file);
+
+    audio.src = url;
+
+    audio.play();
+
+    console.log("Playing:", file.name);
+
+}
+
+/* ===============================
+   Auto Next
+================================ */
+
+audio.addEventListener("ended", () => {
+
+    currentSong++;
+
+    if (currentSong >= songs.length)
+        currentSong = 0;
+
+    playSong(currentSong);
+
+});
