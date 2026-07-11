@@ -187,3 +187,34 @@ audio.addEventListener("ended", () => {
     }
 
 });
+const shuffleBtn=document.getElementById("shuffleBtn");
+
+const repeatBtn=document.getElementById("repeatBtn");
+
+if(shuffleBtn){
+
+shuffleBtn.onclick=()=>{
+
+shuffle=!shuffle;
+
+shuffleBtn.style.color=
+
+shuffle?"#8b5cf6":"white";
+
+};
+
+}
+
+if(repeatBtn){
+
+repeatBtn.onclick=()=>{
+
+repeat=!repeat;
+
+repeatBtn.style.color=
+
+repeat?"#8b5cf6":"white";
+
+};
+
+}
