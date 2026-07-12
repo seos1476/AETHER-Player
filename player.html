@@ -6,24 +6,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AETHER Player | Music Player</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>AETHER Player</title>
 
 <link rel="stylesheet" href="css/player.css">
 
 </head>
 
+
 <body>
+
 
 <div class="background-blur"></div>
 
+
 <div class="app">
 
-<!-- ================= Sidebar ================= -->
 
 <aside class="sidebar">
 
@@ -31,236 +28,273 @@
 
 <h2>🎵 AETHER</h2>
 
-<p>Offline First</p>
+<p>Offline + Spotify</p>
 
 </div>
+
 
 <nav>
 
-<a class="active" href="#">🏠 Home</a>
-
-<a href="#">🎵 Library</a>
-
-<a href="#">❤️ Favorites</a>
-
-<a href="#">📁 Upload</a>
-
-<a href="#">☁ Cloud Sync</a>
-
-<a href="#">⚙ Settings</a>
+<a class="active">🏠 Home</a>
+<a>🎵 Library</a>
+<a>❤️ Favorites</a>
+<a>📁 Upload</a>
+<a>⚙ Settings</a>
 
 </nav>
 
-<div class="sidebar-footer">
-
-<p>Version 2.0 Developer Preview</p>
-
-</div>
 
 </aside>
 
-<!-- ================= Main ================= -->
+
+
 
 <main class="main">
 
+
 <header>
+
 
 <div class="search">
 
+
 <input
+
 id="searchInput"
-type="text"
-placeholder="Search your music...">
+
+placeholder="Search Spotify music..."
+
+>
+
+
+<div id="searchResults"></div>
+
 
 </div>
+
+
 
 <div class="top-buttons">
 
+
+<button id="spotifyLogin">
+
+🎧 Login Spotify
+
+</button>
+
+
 <input
-type="file"
+
 id="musicUpload"
+
+type="file"
+
 accept="audio/*"
+
 multiple
-hidden>
+
+hidden
+
+>
+
 
 <button id="uploadBtn">
-📁 Upload Music
+
+📁 Upload
+
 </button>
 
-<button>
-ESP32
-</button>
-
-<button>
-GitHub
-</button>
 
 </div>
+
 
 </header>
 
+
+
+
+
 <section class="hero-player">
+
+
 
 <div class="album-card">
 
-<div class="album-art"></div>
+
+<img
+
+id="albumArt"
+
+class="album-art"
+
+src=""
+
+>
+
 
 <h2 id="nowPlayingTitle">
+
 No Song Playing
+
 </h2>
 
+
 <p id="nowPlayingArtist">
-Upload music to begin
+
+AETHER Player
+
 </p>
+
+
 
 <div id="progress" class="progress">
 
-<div id="progressFill" class="progress-fill"></div>
+<div id="progressFill"></div>
 
 </div>
+
+
 
 <div class="time-info">
 
-<span id="currentTime">0:00</span>
+<span id="currentTime">
+0:00
+</span>
 
-<span id="duration">0:00</span>
+
+<span id="duration">
+0:00
+</span>
 
 </div>
+
+
+
+
 <div class="controls">
 
+
 <button id="shuffleBtn">
-
 🔀
-
 </button>
+
 
 <button id="prevBtn">
-
 ⏮
-
 </button>
+
 
 <button id="playPauseBtn">
-
 ▶
-
 </button>
+
 
 <button id="nextBtn">
-
 ⏭
-
 </button>
+
 
 <button id="repeatBtn">
-
 🔁
-
 </button>
 
-</div>
-
-<button id="prevBtn">⏮</button>
-
-<button id="playPauseBtn">▶</button>
-
-<button id="nextBtn">⏭</button>
 
 </div>
 
-<div class="volume-container">
+
+
+
+<div>
 
 🔊
 
 <input
+
 id="volumeSlider"
+
 type="range"
+
 min="0"
+
 max="1"
+
 step="0.01"
-value="1">
+
+value="0.7"
+
+>
 
 </div>
 
+
+
 </div>
+
+
+
+
 
 <div class="playlist">
 
-<h2>Library</h2>
+
+<h2>
+
+Library
+
+</h2>
+
 
 <div id="songList">
 
-<p>No songs uploaded.</p>
+No songs
 
 </div>
 
+
 </div>
 
-</section>
-<section class="stats">
 
-    <div class="stat-card">
-
-        <h2 id="songCount">0</h2>
-
-        <p>Offline Songs</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <h2>ESP32</h2>
-
-        <p>Ready</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <h2>Spotify</h2>
-
-        <p>Companion (Coming)</p>
-
-    </div>
-
-    <div class="stat-card">
-
-        <h2>YouTube</h2>
-
-        <p>Companion (Coming)</p>
-
-    </div>
 
 </section>
 
-<!-- HTML5 Audio Engine -->
+
+
+
 
 <audio id="audioPlayer"></audio>
 
+
+
+
 </main>
+
+
 
 </div>
 
-<!-- JavaScript -->
+
+
+
+
+<!-- Spotify SDK -->
+
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+
+
+<!-- AETHER -->
 
 <script src="js/main.js"></script>
 
 <script src="js/audio.js"></script>
 
-<script src="js/player.js"></script>
-
-    <button id="spotifyLogin">
-🎧 Login with Spotify
-</button>
-</body>
-
-
-</html>
-<script src="https://sdk.scdn.co/spotify-player.js"></script>
-<script src="js/main.js"></script>
-<script src="js/pkce.js"></script>
-<script src="js/audio.js"></script>
-<script src="https://sdk.scdn.co/spotify-player.js"></script>
-<script src="js/player.js"></script>
 <script src="js/spotify.js"></script>
 
+<script src="js/player.js"></script>
+
+
+
+</body>
+
+</html>
