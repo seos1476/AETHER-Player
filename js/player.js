@@ -1,8 +1,12 @@
 /* ==========================================
-   AETHER Player Controls v2.0
+   AETHER Player v3.0
 ========================================== */
 
-console.log("🎵 Player Controls Loaded");
+console.log("🎵 AETHER Player Loaded");
+
+/* ==========================
+   LOCAL PLAYER
+========================== */
 
 const audio = document.getElementById("audioPlayer");
 
@@ -18,28 +22,61 @@ const durationText = document.getElementById("duration");
 
 const volumeSlider = document.getElementById("volumeSlider");
 
+const spotifyLogin =
+document.getElementById("spotifyLogin");
+
 let isPlaying = false;
 
+let spotifyPlayer = null;
+
+let spotifyReady = false;
+/* ==========================
+   SPOTIFY LOGIN
+========================== */
+
+if (spotifyLogin) {
+
+spotifyLogin.addEventListener("click", () => {
+
+window.location.href =
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/login";
+
+});
+
+}
 /* ==========================
    PLAY / PAUSE
 ========================== */
 
 if (playBtn) {
 
-    playBtn.addEventListener("click", () => {
+    playBtn.addEventListener("click", async () => {
 
+        // Spotify Player Active
+        if (spotifyReady && spotifyPlayer) {
+
+            spotifyPlayer.togglePlay();
+            return;
+
+        }
+
+        // Local Player
         if (!audio.src) return;
 
         if (audio.paused) {
 
             audio.play();
+
             playBtn.innerHTML = "⏸";
+
             isPlaying = true;
 
         } else {
 
             audio.pause();
+
             playBtn.innerHTML = "▶";
+
             isPlaying = false;
 
         }
@@ -47,15 +84,30 @@ if (playBtn) {
     });
 
 }
-
 /* ==========================
    PREVIOUS
 ========================== */
 
 if (prevBtn) {
 
-    prevBtn.addEventListener("click", () => {
+    prevBtn.addEventListener("click", async () => {
 
+        // Spotify
+        if (spotifyReady && spotifyPlayer) {
+
+            await fetch(
+                "https://spotify-auth-flow--seos1476.replit.app/api/spotify/previous",
+                {
+                    method: "POST",
+                    credentials: "include"
+                }
+            );
+
+            return;
+
+        }
+
+        // Local Player
         if (typeof playSong === "function") {
 
             currentSong--;
@@ -77,8 +129,24 @@ if (prevBtn) {
 
 if (nextBtn) {
 
-    nextBtn.addEventListener("click", () => {
+    nextBtn.addEventListener("click", async () => {
 
+        // Spotify
+        if (spotifyReady && spotifyPlayer) {
+
+            await fetch(
+                "https://spotify-auth-flow--seos1476.replit.app/api/spotify/next",
+                {
+                    method: "POST",
+                    credentials: "include"
+                }
+            );
+
+            return;
+
+        }
+
+        // Local Player
         if (typeof playSong === "function") {
 
             currentSong++;
@@ -93,179 +161,490 @@ if (nextBtn) {
     });
 
 }
-
 /* ==========================
-   TIME FORMAT
+   SPOTIFY WEB PLAYBACK SDK
 ========================== */
 
-function formatTime(seconds) {
+window.onSpotifyWebPlaybackSDKReady = async () => {
 
-    if (isNaN(seconds)) return "0:00";
+    console.log("🎧 Spotify SDK Loaded");
 
-    const min = Math.floor(seconds / 60);
+    try {
 
-    const sec = Math.floor(seconds % 60)
-        .toString()
-        .padStart(2, "0");
+        const response = await fetch(
+            "https://spotify-auth-flow--seos1476.replit.app/api/spotify/token",
+            {
+                credentials: "include"
+            }
+        );
 
-    return `${min}:${sec}`;
+        if (!response.ok) {
 
-}
+            console.log("Spotify login required.");
 
-/* ==========================
-   UPDATE PROGRESS
-========================== */
+            return;
 
-audio.addEventListener("timeupdate", () => {
+        }
 
-    const percent =
-        (audio.currentTime / audio.duration) * 100;
+        const data = await response.json();
 
-    if (progressFill)
-        progressFill.style.width = percent + "%";
+        spotifyPlayer = new Spotify.Player({
 
-    if (currentTimeText)
-        currentTimeText.textContent =
-            formatTime(audio.currentTime);
+            name: "AETHER Player",
 
-    if (durationText)
-        durationText.textContent =
-            formatTime(audio.duration);
+            getOAuthToken: cb => {
 
-});
+                cb(data.access_token);
 
-/* ==========================
-   SEEK
-========================== */
+            },
 
-if (progress) {
+            volume: 0.6
 
-    progress.addEventListener("click", (e) => {
+        });
 
-        const rect = progress.getBoundingClientRect();
+        spotifyPlayer.addListener("ready", ({ device_id }) => {
 
-        const x = e.clientX - rect.left;
+            spotifyReady = true;
 
-        const percent = x / rect.width;
+            console.log("✅ Spotify Device Ready");
 
-        audio.currentTime =
-            percent * audio.duration;
+            console.log("Device ID:", device_id);
 
-    });
+        });
 
-}
+        spotifyPlayer.addListener("not_ready", ({ device_id }) => {
 
-/* ==========================
-   VOLUME
-========================== */
+            spotifyReady = false;
 
-if (volumeSlider) {
+            console.log("⚠ Device Offline");
 
-    volumeSlider.addEventListener("input", () => {
+            console.log(device_id);
 
-        audio.volume = volumeSlider.value;
+        });
 
-    });
+        spotifyPlayer.addListener("initialization_error", ({ message }) => {
 
-}
+            console.error(message);
 
-/* ==========================
-   SONG ENDED
-========================== */
+        });
 
-audio.addEventListener("ended", () => {
+        spotifyPlayer.addListener("authentication_error", ({ message }) => {
 
-    if (typeof playSong === "function") {
+            console.error(message);
 
-        currentSong++;
+        });
 
-        if (currentSong >= songs.length)
-            currentSong = 0;
+        spotifyPlayer.addListener("account_error", ({ message }) => {
 
-        playSong(currentSong);
+            console.error(message);
+
+        });
+
+        spotifyPlayer.addListener("playback_error", ({ message }) => {
+
+            console.error(message);
+
+        });
+
+        await spotifyPlayer.connect();
 
     }
 
-});
-const shuffleBtn=document.getElementById("shuffleBtn");
+    catch(err){
 
-const repeatBtn=document.getElementById("repeatBtn");
+        console.error(err);
+
+    }
+
+};
+/* ==========================================
+   AETHER Player
+   Spotify Live UI
+========================================== */
+
+async function updateSpotifyNowPlaying() {
+
+    if (!spotifyReady) return;
+
+    try {
+
+        const response = await fetch(
+            "https://spotify-auth-flow--seos1476.replit.app/api/spotify/current",
+            {
+                credentials: "include"
+            }
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (!data || !data.item) return;
+
+        // Song Title
+        const title = document.getElementById("songTitle");
+        if (title)
+            title.textContent = data.item.name;
+
+        // Artist
+        const artist = document.getElementById("artistName");
+        if (artist)
+            artist.textContent =
+                data.item.artists.map(a => a.name).join(", ");
+
+        // Album Art
+        const albumArt = document.getElementById("albumArt");
+        if (albumArt)
+            albumArt.src = data.item.album.images[0].url;
+
+        // Progress
+        const percent =
+            (data.progress_ms / data.item.duration_ms) * 100;
+
+        if (progressFill)
+            progressFill.style.width = percent + "%";
+
+        // Duration
+        if (durationText)
+            durationText.textContent =
+                formatTime(data.item.duration_ms / 1000);
+
+        // Current Time
+        if (currentTimeText)
+            currentTimeText.textContent =
+                formatTime(data.progress_ms / 1000);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+/* Refresh every second */
+
+setInterval(updateSpotifyNowPlaying,1000);
+
+/* ==========================================
+   SHUFFLE
+========================================== */
+
+const shuffleBtn = document.getElementById("shuffleBtn");
 
 if(shuffleBtn){
 
-shuffleBtn.onclick=()=>{
+shuffleBtn.onclick = ()=>{
 
-shuffle=!shuffle;
-
-shuffleBtn.style.color=
-
-shuffle?"#8b5cf6":"white";
+alert("Shuffle support coming next update.");
 
 };
 
 }
+
+/* ==========================================
+   REPEAT
+========================================== */
+
+const repeatBtn = document.getElementById("repeatBtn");
 
 if(repeatBtn){
 
-repeatBtn.onclick=()=>{
+repeatBtn.onclick = ()=>{
 
-repeat=!repeat;
-
-repeatBtn.style.color=
-
-repeat?"#8b5cf6":"white";
+alert("Repeat support coming next update.");
 
 };
 
 }
-const spotifyLogin = document.getElementById("spotifyLogin");
+/* ==========================================
+   SPOTIFY SEARCH
+========================================== */
 
-spotifyLogin.addEventListener("click", () => {
-    window.location.href =
-    "https://spotify-auth-flow--seos1476.replit.app/api/spotify/login";
-});
-async function loadSpotifyUser(){
+const searchInput =
+document.getElementById("searchInput");
+
+
+const searchResults =
+document.getElementById("searchResults");
+
+
+if(searchInput){
+
+searchInput.addEventListener(
+"input",
+async ()=>{
+
+
+const query = searchInput.value.trim();
+
+
+if(query.length < 2) return;
+
+
+try{
+
 
 const response = await fetch(
-"https://spotify-auth-flow--seos1476.replit.app/api/spotify/me",
+
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/search?q="
++ encodeURIComponent(query),
+
 {
 credentials:"include"
 }
+
 );
 
-const user = await response.json();
 
-console.log(user);
+const data = await response.json();
+
+
+displaySearchResults(
+data.tracks.items
+);
+
 
 }
 
-loadSpotifyUser();
-window.onSpotifyWebPlaybackSDKReady = async () => {
+catch(err){
 
-const tokenResponse = await fetch(
-"https://spotify-auth-flow--seos1476.replit.app/api/spotify/token",
-{
-credentials:"include"
+console.log(err);
+
 }
-);
 
-const data = await tokenResponse.json();
-
-const player = new Spotify.Player({
-
-name:"AETHER Player",
-
-getOAuthToken: cb => {
-cb(data.access_token);
-},
-
-volume:0.5
 
 });
 
 
-player.connect();
+}
 
-console.log("AETHER Spotify Player Connected");
+
+
+function displaySearchResults(tracks){
+
+
+if(!searchResults) return;
+
+
+searchResults.innerHTML="";
+
+
+tracks.forEach(track=>{
+
+
+const song=document.createElement("div");
+
+
+song.className="search-song";
+
+
+song.innerHTML=`
+
+<img src="${track.album.images[0].url}" width="50">
+
+
+<div>
+
+<h3>${track.name}</h3>
+
+<p>
+${track.artists[0].name}
+</p>
+
+</div>
+
+`;
+
+
+
+song.onclick=()=>{
+
+
+playSpotifyTrack(
+track.uri
+);
+
 
 };
+
+
+
+searchResults.appendChild(song);
+
+
+
+});
+
+
+}
+
+
+
+/* ==========================================
+   SELECT SONG
+========================================== */
+
+async function playSpotifyTrack(uri){
+
+
+await fetch(
+
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/play",
+
+{
+
+method:"PUT",
+
+credentials:"include",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+uri:uri
+
+})
+
+}
+
+);
+
+
+console.log(
+"Playing:",
+uri
+);
+
+
+}
+/* ==========================================
+   AETHER Spotify Playback Engine
+========================================== */
+
+
+async function startSpotifyPlayback(uri){
+
+
+try{
+
+
+const response = await fetch(
+
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/play",
+
+{
+
+method:"PUT",
+
+credentials:"include",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+uri:uri
+
+})
+
+}
+
+);
+
+
+
+const result = await response.json();
+
+
+console.log(
+"Spotify Playback Started",
+result
+);
+
+
+}
+
+catch(error){
+
+
+console.error(
+"Playback Error:",
+error
+);
+
+
+}
+
+
+}
+
+
+/* ==========================
+   CURRENT DEVICE CHECK
+========================== */
+
+
+if(spotifyPlayer){
+
+
+spotifyPlayer.addListener(
+
+"ready",
+
+({device_id})=>{
+
+
+console.log(
+"AETHER Spotify Device:",
+device_id
+);
+
+
+}
+
+);
+
+
+}
+
+
+/* ==========================
+   CONNECT PLAY BUTTON
+========================== */
+
+
+if(playBtn){
+
+
+playBtn.addEventListener(
+
+"click",
+
+()=>{
+
+
+if(spotifyReady){
+
+
+spotifyPlayer.togglePlay();
+
+
+}
+
+
+}
+
+);
+
+
+}
