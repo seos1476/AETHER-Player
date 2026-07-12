@@ -218,3 +218,9 @@ repeat?"#8b5cf6":"white";
 };
 
 }
+const spotifyLogin = document.getElementById("spotifyLogin");
+
+spotifyLogin.addEventListener("click", () => {
+    window.location.href =
+    "https://spotify-auth-flow--seos1476.replit.app/api/spotify/login";
+});
