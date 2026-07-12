@@ -1,0 +1,304 @@
+let shuffle=false;
+let repeat=false;
+function shuffleSong(){
+
+if(songs.length===0) return;
+
+const random=
+
+Math.floor(Math.random()*songs.length);
+
+playSong(random);
+
+}
+/* ==========================================
+   AETHER Player Audio Engine v2.0
+========================================== */
+
+const audio = document.getElementById("audioPlayer");
+
+const uploadInput = document.getElementById("musicUpload");
+const uploadBtn = document.getElementById("uploadBtn");
+
+const songList = document.getElementById("songList");
+
+const title = document.getElementById("nowPlayingTitle");
+const artist = document.getElementById("nowPlayingArtist");
+
+const counter = document.getElementById("songCount");
+
+let songs = [];
+let currentSong = -1;
+
+/* ==========================
+   Drag & Drop Upload
+========================== */
+
+const dropZone = document.body;
+
+dropZone.addEventListener("dragover", (e) => {
+
+    e.preventDefault();
+
+    dropZone.classList.add("dragging");
+
+});
+
+dropZone.addEventListener("dragleave", () => {
+
+    dropZone.classList.remove("dragging");
+
+});
+
+dropZone.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    dropZone.classList.remove("dragging");
+
+    const files = [...e.dataTransfer.files]
+        .filter(file => file.type.startsWith("audio/"));
+
+    if(files.length===0) return;
+
+    songs.push(...files);
+
+    counter.textContent=songs.length;
+
+    renderLibrary();
+
+});
+
+/* ==========================
+   Upload Songs
+========================== */
+
+uploadInput.addEventListener("change", (e) => {
+
+    const files = Array.from(e.target.files);
+
+    songs.push(...files);
+
+    counter.textContent = songs.length;
+
+    renderLibrary();
+
+});
+
+/* ==========================
+   Library
+========================== */
+
+function renderLibrary() {
+
+    songList.innerHTML = "";
+
+    if (songs.length === 0) {
+
+        songList.innerHTML =
+            "<p>No songs uploaded.</p>";
+
+        return;
+
+    }
+
+    songs.forEach((song, index) => {
+
+        const row = document.createElement("div");
+
+        row.className = "song";
+row.innerHTML = `
+<div class="song-left">
+
+<span>🎵</span>
+
+<div>
+
+<h3>${song.name.replace(".mp3","")}</h3>
+
+<p>Local Audio</p>
+
+</div>
+
+</div>
+
+<button class="fav-btn">
+
+🤍
+
+</button>
+`;
+
+        row.onclick = () => {
+
+            playSong(index);
+
+        };
+
+  const fav=row.querySelector(".fav-btn");
+
+fav.addEventListener("click",(e)=>{
+
+e.stopPropagation();
+
+fav.classList.toggle("liked");
+
+fav.innerHTML=
+fav.classList.contains("liked")
+?"❤️":"🤍";
+
+});
+
+
+}
+
+/* ==========================
+   Play Song
+========================== */
+
+function playSong(index) {
+
+    currentSong = index;
+
+    const file = songs[index];
+
+    audio.src = URL.createObjectURL(file);
+
+    audio.play();
+
+    title.textContent =
+        file.name.replace(".mp3","");
+
+    artist.textContent =
+        "Local Audio";
+
+    document.querySelectorAll(".song")
+        .forEach(item => item.classList.remove("active"));
+
+    document.querySelectorAll(".song")[index]
+        .classList.add("active");
+
+    const playBtn =
+        document.getElementById("playPauseBtn");
+
+    if(playBtn)
+        playBtn.innerHTML="⏸";
+
+}
+
+/* ==========================
+   Next Song
+========================== */
+
+function nextSong(){
+
+    if(songs.length===0) return;
+
+    currentSong++;
+
+    if(currentSong>=songs.length)
+        currentSong=0;
+
+    playSong(currentSong);
+
+}
+
+/* ==========================
+   Previous Song
+========================== */
+
+function previousSong(){
+
+    if(songs.length===0) return;
+
+    currentSong--;
+
+    if(currentSong<0)
+        currentSong=songs.length-1;
+
+    playSong(currentSong);
+
+}
+
+/* ==========================
+   Song Finished
+========================== */
+
+audio.addEventListener("ended",()=>{
+
+if(repeat){
+
+playSong(currentSong);
+
+}
+
+else if(shuffle){
+
+shuffleSong();
+
+}
+
+else{
+
+nextSong();
+
+}
+
+});
+
+/* Make available to player.js */
+
+window.playSong = playSong;
+window.nextSong = nextSong;
+window.previousSong = previousSong;
+window.songs = songs;
+window.currentSong = currentSong;
+/* ==========================
+   Search
+========================== */
+
+const search=document.getElementById("searchInput");
+
+search.addEventListener("input",()=>{
+
+const value=search.value.toLowerCase();
+
+document.querySelectorAll(".song").forEach(song=>{
+
+const text=song.innerText.toLowerCase();
+
+song.style.display=text.includes(value)
+?"flex":"none";
+
+});
+
+});
+/* ==========================
+   Keyboard
+========================== */
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.code==="Space"){
+
+e.preventDefault();
+
+document
+.getElementById("playPauseBtn")
+.click();
+
+}
+
+if(e.code==="ArrowRight"){
+
+nextSong();
+
+}
+
+if(e.code==="ArrowLeft"){
+
+previousSong();
+
+}
+
+});
