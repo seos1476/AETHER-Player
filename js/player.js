@@ -240,3 +240,32 @@ console.log(user);
 }
 
 loadSpotifyUser();
+window.onSpotifyWebPlaybackSDKReady = async () => {
+
+const tokenResponse = await fetch(
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/token",
+{
+credentials:"include"
+}
+);
+
+const data = await tokenResponse.json();
+
+const player = new Spotify.Player({
+
+name:"AETHER Player",
+
+getOAuthToken: cb => {
+cb(data.access_token);
+},
+
+volume:0.5
+
+});
+
+
+player.connect();
+
+console.log("AETHER Spotify Player Connected");
+
+};
