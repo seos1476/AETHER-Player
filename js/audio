@@ -1,5 +1,5 @@
 let shuffle=false;
-nextSong()
+let repeat=false;
 function shuffleSong(){
 
 if(songs.length===0) return;
@@ -128,7 +128,6 @@ row.innerHTML = `
 
 </button>
 `;
-        `;
 
         row.onclick = () => {
 
@@ -150,7 +149,6 @@ fav.classList.contains("liked")
 
 });
 
-    });
 
 }
 
