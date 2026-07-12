@@ -224,3 +224,19 @@ spotifyLogin.addEventListener("click", () => {
     window.location.href =
     "https://spotify-auth-flow--seos1476.replit.app/api/spotify/login";
 });
+async function loadSpotifyUser(){
+
+const response = await fetch(
+"https://spotify-auth-flow--seos1476.replit.app/api/spotify/me",
+{
+credentials:"include"
+}
+);
+
+const user = await response.json();
+
+console.log(user);
+
+}
+
+loadSpotifyUser();
